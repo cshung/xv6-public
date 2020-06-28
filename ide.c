@@ -53,6 +53,7 @@ ideinit(void)
   int i;
 
   initlock(&idelock, "ide");
+  picenable(IRQ_IDE);
   ioapicenable(IRQ_IDE, ncpu - 1);
   idewait(0);
 
