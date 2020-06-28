@@ -16,6 +16,31 @@ int ismp;
 int ncpu;
 uchar ioapicid;
 
+#ifdef HACK_FOR_V86
+
+//
+// The BIOS loaded in v86 indicate it supports SMP, but it doesn't.
+//
+// We have 3 alternatives here, either
+// Fix/Hack the BIOS so that it does not report MPTable
+// I attempted to do a binary patch to replace all _MP_ to _NP_
+// It doesn't work, somehow the bios recover itself.
+// 
+// Implement lapic support in v86, which is an interesting challenge,
+// perhaps not for now, or
+//
+// Just hack it like below, that is what I choose for now.
+//
+// To compile - use make DEFINE='-D HACK_FOR_V86'
+//
+
+static struct mpconf*
+mpconfig(struct mp **pmp)
+{
+  return 0;
+}
+
+#else
 static uchar
 sum(uchar *addr, int len)
 {
@@ -88,6 +113,7 @@ mpconfig(struct mp **pmp)
   *pmp = mp;
   return conf;
 }
+#endif
 
 void
 mpinit(void)
